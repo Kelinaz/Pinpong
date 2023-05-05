@@ -7,12 +7,45 @@ pygame.init()
 
 window = pygame.display.set_mode((setting_win["WIDTH"], setting_win["HEIGHT"]))
 pygame.display.set_caption("PinPongi")
-click = False
+
+def show_history(window):
+    show_while = True
+    click = False
+    button_1 = pygame.rect.Rect(10,20,30,20)
+    while show_while:
+        window.blit(history_screen,(0,0))
+        window.blit(back_to_menu, (10, 20))
+        mx, my = pygame.mouse.get_pos()
+        font = pygame.font.Font(None, 25)
+        y = 10
+        x = 10
+        for key_main in history.keys():
+            window.blit(font.render(f"-", True, (0,0,0)), (10, y))
+            for key, value in zip(history[key_main].keys().value()):
+                window.blit(font.render(f"{key} : {value}", True (0,0,0)), (x,y))
+                x += 300
+            x = 10
+            y += 50
+            
+        if button_1.collidepoint((mx,my)):
+            if click:
+                show_while = False
+
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+
+        pygame.display.flip()
 def menu():
     global replay
     replay = False
     global menu_while
     menu_while = True
+    click = False
     clock = pygame.time.Clock()
     button_1 = pygame.Rect(50, 20, 150, 50)
     button_2 = pygame.Rect(50, 90, 150 , 50)
@@ -28,7 +61,9 @@ def menu():
                 run()
         if button_2.collidepoint((mx,my)):
             if click:
-                pass
+                show_history(window)
+                #with open("history.json", "r", encoding="utf-8") as file:
+                #    history = json.load(file)
         if button_3.collidepoint((mx, my)):
             if click:
                 pygame.quit()
@@ -46,13 +81,12 @@ def menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    menu_while = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click = True
                 if event.button == 2:
+                    click = True
+                if event.button == 3:
                     click = True
         window.blit(font_text.render(f"Quit", True, (0,0,0)), (105, 175))
         window.blit(font_text.render(f"Play", True, (0,0,0)), (105, 35))
@@ -130,6 +164,9 @@ def run():
             replay = True
             game= False
             menu()
+        if game== False:
+            history["попередння гра"] = wall1_obj.points, wall2_image.points
+
         pygame.display.flip()
         clock.tick(setting_win["FPS"])
-menu()    
+menu()
